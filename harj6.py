@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import ImageTk, Image
 
-
+from multiprocessing import Process, current_process
 
 
 ikkuna=tk.Tk()
@@ -116,26 +116,31 @@ def i_suppose_i_have_earned_so_much_points(amount_of_points):
         winsound.Beep(440+i*100,500)
 
 
-event = threading.Event()
+event1 = threading.Event()
+event2 = threading.Event()
 ######################################################################## ernesti
-
+monkey_num=0
 def ernesti_hae_apina():
- 
+    global monkey_num
+    monkey_num = monkey_num + 6
     monkeypos_x=200
-    monkeypos_y=400
+   
     count=0
     monkey = tk.Label(ikkuna,image=monkey_img)
     fatigue=1
     checktime=0
-    oja_pos=99
+    oja_pos=105
+    oja_pos= oja_pos-monkey_num
+    monkeypos_y=200+oja_pos*2
     break_var=0
-    while monkeypos_y > 200 and break_var==0:
+    #i_suppose_i_have_earned_so_much_points(2)
+    while monkeypos_y > 198 and break_var==0:
         
         winsound.Beep(800,60)
         while checktime < fatigue and break_var==0:
             time.sleep(1)
             checktime+=1
-            if event.is_set():
+            if event1.is_set():
                 break_var=1
                 
         ernestin_oja[oja_pos,0] =ernestin_oja[oja_pos,0]-1
@@ -194,7 +199,7 @@ def ernesti_sijoita_apina():
         ernesti_sijoitettu_apina_thread(monkeypos_y=monkeypos_y,oja_pos=oja_pos)
            
         time.sleep(1)
-
+    i_suppose_i_have_earned_so_much_points(1)
      
         
 def ernesti_sijoitettu_apina(monkeypos_y,oja_pos):
@@ -213,9 +218,9 @@ def ernesti_sijoitettu_apina(monkeypos_y,oja_pos):
        
         
 
-        winsound.PlaySound("dig.wav",winsound.SND_ASYNC)
+        #winsound.PlaySound("dig.wav",winsound.SND_ASYNC)
         while checktime < fatigue and break_var==0:
-            if event.is_set():
+            if event1.is_set():
                 break_var=1
             time.sleep(1)
             checktime+=1
@@ -223,9 +228,8 @@ def ernesti_sijoitettu_apina(monkeypos_y,oja_pos):
         ernestin_oja[oja_pos,0] =ernestin_oja[oja_pos,0]-1    
         fatigue = fatigue*2
         ax1m.set_data(ernestin_oja)
-        #ax1.matshow(ernestin_oja)
         fig1.canvas.draw()
-        fig1.canvas.flush_events()
+        #fig1.canvas.flush_events()
             
         monkeypos_y=monkeypos_y-2
         
@@ -235,7 +239,7 @@ def ernesti_sijoitettu_apina(monkeypos_y,oja_pos):
         
     monkey.destroy() 
     
-    #i_suppose_i_have_earned_so_much_points(1)
+    
 
 def ernesti_sijoitettu_apina_thread(monkeypos_y,oja_pos):
     t=threading.Thread(target=ernesti_sijoitettu_apina,args=(monkeypos_y,oja_pos,))
@@ -249,21 +253,26 @@ def ernesti_sijoita_apina_thread():
 #################################################################### kernesti
 
 def kernesti_hae_apina():
-    monkeypos_x=510
-    monkeypos_y=400
+    global monkey_num2
+    monkey_num2 = monkey_num2 + 6
+    monkeypos_x=400
+   
     count=0
     monkey = tk.Label(ikkuna,image=monkey_img)
     fatigue=1
     checktime=0
-    oja_pos=99
+    oja_pos=105
+    oja_pos= oja_pos-monkey_num2
+    monkeypos_y=200+oja_pos*2
     break_var=0
-    while monkeypos_y > 200 and break_var==0:
+    #i_suppose_i_have_earned_so_much_points(2)
+    while monkeypos_y > 198 and break_var==0:
         
         kernestin_oja[oja_pos,0] =kernestin_oja[oja_pos,0]-1
         print(kernestin_oja[oja_pos,0])
         winsound.Beep(800,60)
         while checktime < fatigue and break_var==0:
-            if event.is_set():
+            if event2.is_set():
                 break_var=1
             time.sleep(1)
             checktime+=1
@@ -271,7 +280,7 @@ def kernesti_hae_apina():
         fatigue = fatigue*2
         ax3m.set_data(kernestin_oja)
         fig3.canvas.draw()
-        fig3.canvas.flush_events()
+     
             
         monkeypos_y=monkeypos_y-2
         count = count +1
@@ -340,9 +349,9 @@ def kernesti_sijoitettu_apina(monkeypos_y,oja_pos):
        
         
 
-        winsound.PlaySound("dig.wav",winsound.SND_ASYNC)
+        #winsound.PlaySound("dig.wav",winsound.SND_ASYNC)
         while checktime < fatigue and break_var==0:
-            if event.is_set():
+            if event2.is_set():
                 break_var=1
             time.sleep(1)
             checktime+=1
@@ -351,7 +360,7 @@ def kernesti_sijoitettu_apina(monkeypos_y,oja_pos):
         fatigue = fatigue*2
         ax3m.set_data(kernestin_oja)
         fig3.canvas.draw()
-        fig3.canvas.flush_events()
+        #fig3.canvas.flush_events()
             
         monkeypos_y=monkeypos_y-2
         
@@ -374,7 +383,8 @@ def kernesti_sijoita_apina_thread():
 
 def ojan_taytto():
   
-    event.set()
+    event1.set()
+    event2.set()
     for j in range(100):
         for i in range(1):
             ernestin_oja[j,i]=1
@@ -413,7 +423,7 @@ def ernesti_oja_check():
                 winsound.Beep(2000,100)
                 oja_full=1
                 n=1
-                event.set()
+                event1.set()
 
 def kernesti_oja_check():
     global oja_full
@@ -434,18 +444,25 @@ def kernesti_oja_check():
             if i==99:
                 winsound.PlaySound("water.wav",winsound.SND_ASYNC)
                 winsound.Beep(2000,100)
-                oja_full=1
+                oja_full=2
                 n=1
-                event.set()
+                event2.set()
 
 
 def allas_check():
     global oja_full
     n=0
     i=0
-    
+    first=1
     while n==0:
-        if oja_full ==1:
+        if oja_full >0:
+            while first ==1:
+                if oja_full ==1:
+                    first=2
+                if oja_full ==2:
+                    first=3
+
+                
                 for j in range(20):
                      for i in range(60):
                         allas[j,i]=-1
@@ -457,7 +474,10 @@ def allas_check():
                         time.sleep(0.005)
                         if j ==19:
                             if i==59:
-                                winsound.PlaySound("water.wav",winsound.SND_ASYNC)
+                                if first==2:
+                                    winsound.Beep(300,10000)
+                                if first==3:
+                                    winsound.Beep(2000,10000)
                                 n=1
 
 
@@ -467,6 +487,9 @@ def ernesti_oja_check_thread():
     
     t=threading.Thread(target=ernesti_oja_check)
     t.start()
+
+    
+    
 
 def kernesti_oja_check_thread():
     
@@ -483,13 +506,13 @@ def allas_check_thread():
 ernesti_add_button = tk.Button(ikkuna, text ="ernesti lisää", command = ernesti_hae_apina_thread)
 ernesti_add_button.place(x=50,y=50)
 
-ernesti_place_button = tk.Button(ikkuna, text ="ernesti sijoita", command = ernesti_sijoita_apina_thread)
+ernesti_place_button = tk.Button(ikkuna, text ="ernesti sijoita 10", command = ernesti_sijoita_apina_thread)
 ernesti_place_button.place(x=50,y=140)
 
 kernesti_add_button = tk.Button(ikkuna, text ="kernesti lisää", command = kernesti_hae_apina_thread)
 kernesti_add_button.place(x=140,y=50)
 
-ernesti_place_button = tk.Button(ikkuna, text ="kernesti sijoita", command = kernesti_sijoita_apina_thread)
+ernesti_place_button = tk.Button(ikkuna, text ="kernesti sijoita 10", command = kernesti_sijoita_apina_thread)
 ernesti_place_button.place(x=140,y=140)
 
 ernesti_fill_button = tk.Button(ikkuna, text ="täytä ojat", command = oja_thread)
